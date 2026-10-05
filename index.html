@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>家里都好</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✉️</text></svg>">
+<style>
+  :root{--paper:#f4efe4;--ink:#2b2620;--mut:#7a7264;--line:#c9bda3;--accent:#8a3b2c}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{background:var(--paper);color:var(--ink);font-family:'Noto Serif SC','Songti SC',STSong,SimSun,serif;
+    min-height:100vh;line-height:1.9}
+  .wrap{max-width:560px;margin:0 auto;padding:18px 18px 60px}
+
+  /* ===== 标题页 ===== */
+  #title{min-height:92vh;display:flex;flex-direction:column;justify-content:center;text-align:center}
+  #title h1{font-size:52px;letter-spacing:14px;margin-left:14px;font-weight:900}
+  #title .sub{color:var(--mut);font-size:14px;margin-top:14px;letter-spacing:3px}
+  #title .rule{width:44px;height:1px;background:var(--line);margin:30px auto}
+  #title .btns{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}
+  .tbtn{background:none;border:1px solid var(--ink);color:var(--ink);font-family:inherit;
+    font-size:16px;padding:10px 44px;cursor:pointer;letter-spacing:6px;margin-left:6px}
+  .tbtn:active{background:var(--ink);color:var(--paper)}
+  #title .note{color:var(--mut);font-size:11px;margin-top:34px;line-height:1.8}
+
+  /* ===== 游戏页 ===== */
+  #game{display:none}
+  .top{border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:18px}
+  .date{font-size:14px;letter-spacing:2px}
+  .date b{font-weight:900}
+  .stat{display:flex;gap:14px;margin-top:6px;font-size:12px;color:var(--mut);flex-wrap:wrap}
+  .stat span b{color:var(--ink);font-weight:600}
+  .story p{margin-bottom:16px;text-indent:2em}
+  .choices{margin-top:26px;display:flex;flex-direction:column;gap:10px}
+  .choice{background:none;border:1px solid #a89a7e;color:var(--ink);font-family:inherit;font-size:15px;
+    padding:11px 16px;text-align:left;cursor:pointer;line-height:1.6}
+  .choice:active{background:var(--ink);color:var(--paper)}
+  .dayend{border:1px solid var(--line);padding:18px 18px;margin-top:26px;background:#efe9db}
+  .dayend h3{font-size:15px;letter-spacing:4px;margin-bottom:10px}
+  .dayend ul{list-style:none;font-size:13px;color:#57503f}
+  .dayend li{margin-bottom:4px}
+  .dayend li:before{content:'□ ';}
+  .dayend li.done:before{content:'■ ';color:var(--accent)}
+  .dayend .next{margin-top:12px;color:var(--mut);font-size:12px;letter-spacing:2px}
+  .fx-tip{font-size:12px;color:var(--mut);margin-bottom:18px;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="title">
+    <h1>家里都好</h1>
+    <div class="sub">一九九五年 · 豫北县城 · 代写书信摊</div>
+    <div class="rule"></div>
+    <div class="btns">
+      <button class="tbtn" id="btnStart" style="display:none">开 始</button>
+      <button class="tbtn" id="btnCont" style="display:none">继 续</button>
+    </div>
+    <div class="note">你替全城人写"家里都好"。<br>你自己的那封，压了三个月零五天。<br><br>生活没有读档，这场里也没有。</div>
+  </div>
+
+  <div id="game">
+    <div class="top">
+      <div class="date" id="gDate"></div>
+      <div class="stat" id="gStat"></div>
+    </div>
+    <div class="story" id="gText"></div>
+    <div class="choices" id="gChoices"></div>
+  </div>
+
+</div>
+<script>
+/* ================= 场景数据 ================= */
+/* 第6天起。第1-5天是"已经发生过的事"。 */
+const DAY={num:6,date:'1995年4月1日',week:'周六',weather:'晴，风软'};
+
+const SCENES={
+'d6_wake':{
+  text:[
+    '四月一号，周六。醒得比牙疼那几天晚。',
+    '东屋的咳又起来了。两声，停了。水缸是满的——他挑惯了，院里有自来水也挑。',
+    '今天月初。葡萄架底下那两声咳嗽，往年这个点该来了。听见那两声，就知道：该交房钱了。',
+    '你摸了摸枕头边上的钱。一块九毛五。'
+  ],
+  choices:[
+    {t:'过去东屋，问一声',go:'d6_ask',fx:{rel_gao:1}},
+    {t:'先出摊',go:'d6_street'}
+  ]
+},
+'d6_ask':{
+  text:[
+    '东屋门开着条缝。他坐在床沿上穿袜子，看见你，先开的口：',
+    '"耳朵尖了。"',
+    '"听您咳了两宿。"——不对，是两声。你说的是两声。',
+    '他把袜子穿上，站起来，腰板还是直的："开春都这样。说了。"',
+    '话到这儿就关了门。可他往灶上看了一眼："壶里有水。"',
+    '壶里有水。你的水缸也是满的。老头的话都在别处。'
+  ],
+  choices:[{t:'出摊',go:'d6_street'}]
+},
+'d6_street':{
+  text:[
+    '十字街，月初，街面上人多。',
+    '汇款的多——南边往家寄钱的，一上午排了小队。老纪在柜台里头撕汇款单，一沓。',
+    '头一个客户是个包头巾的媳妇，填汇款单。字报得慢，一笔一笔。你写得快。两毛。',
+    '她走的时候多看了一眼牌子："明儿还来不？"——"来。"',
+    '隔了一会儿又来一个，代写家信，长的，加到一块。收了一块。'
+  ],
+  choices:[{t:'晌午，回院拿馍',go:'d6_rent'}]
+},
+'d6_rent':{
+  text:[
+    '晌午，你回院拿馍。',
+    '一进院门——葡萄架底下，咳嗽两声。',
+    '不是病咳。是那种拉长了音、冲着院里各屋喊的咳。每个月初一早上你都能听见。听见就知道：该交房钱了。',
+    '二十五块。',
+    '你摸了摸兜。一块九毛五。',
+    '他站在葡萄架底下，没看你这屋，手里弄着他那几根芽。'
+  ],
+  choices:[
+    {t:'站定。开口：月中一并给您',go:'d6_rent_talk',fx:{flag:'rent_talked',mood:1,rel_gao:1}},
+    {t:'拿了馍就走。晚上再说',go:'d6_rent_hide',fx:{flag:'rent_hidden',mood:-1}}
+  ]
+},
+'d6_rent_talk':{
+  text:[
+    '你在葡萄架底下站定。',
+    '"高师傅。房租——月中。月中我一并给您。"',
+    '他掰着架子上的芽，没回头。',
+    '"中。"',
+    '就一个字。',
+    '你转身要走，他在后头又说："锅里剩粥。你要没吃——"',
+    '"吃了。"',
+    '"吃了就中。"',
+    '压了半晌的事，落地比想象里轻。他没问你钱上哪儿了。这个"中"，比问什么都沉。'
+  ],
+  choices:[{t:'下午接着出摊',go:'d6_afternoon'}]
+},
+'d6_rent_hide':{
+  text:[
+    '你拿了馍就出了院。走得快了点，快得没有必要。',
+    '下午摊上来了两拨人。写的什么，你后来没记住。',
+    '手上一直有点空。不是没活干的那种空。'
+  ],
+  choices:[{t:'收摊',go:'d6_evening'}]
+},
+'d6_afternoon':{
+  text:[
+    '午后不忙。',
+    '来了个二十来岁的后生，在摊前转了两圈，坐下了，脸憋得通红——写给没过门的媳妇。',
+    '"你说……咋开头？"',
+    '你问了三句：她叫啥、你们咋认识的、你想跟她说啥。他说到第三句，话就多了——她们厂，他攒的钱，他姐不让他现在定。',
+    '你听着，笔在纸上记着道道。轮到写，他凑过来看了一眼，脸更红了："这……这是我的话不？"',
+    '"是你的。我就记了个道道。"'
+  ],
+  choices:[
+    {t:'念一遍给他听',go:'d6_afternoon_read',fx:{mood:1}},
+    {t:'让他自己念',go:'d6_afternoon_self'}
+  ]
+},
+'d6_afternoon_read':{
+  text:[
+    '你念了一遍。念到"你等信，等到啥时候都中"那句，他低下了头。',
+    '两毛。他不还价。走的时候回头看了眼牌子，像记住了什么。'
+  ],
+  choices:[{t:'傍晚收摊',go:'d6_evening'}]
+},
+'d6_afternoon_self':{
+  text:[
+    '他自己念的。磕磕绊绊，念完自己先笑了。',
+    '"哥，笔借我用用。我自己改俩字。"',
+    '笔还回来的时候，纸上多了俩字。写得歪。但是他的。'
+  ],
+  choices:[{t:'傍晚收摊',go:'d6_evening'}]
+},
+'d6_evening':{
+  text:[
+    '傍晚收摊。',
+    '皮三也在收，隔着两步扔过来半句："今儿街面儿，就数汇款的队长。"',
+    '顿了顿。"宋大学，你马婶家——"',
+    '"这事儿……"他自己刹住了，摆摆手，"没事儿。回吧。"',
+    '他不知道马婶家的事。他什么都知道，就是不知道这个。'
+  ],
+  choices:[{t:'回屋',go:'d6_night'}]
+},
+'d6_night':{
+  text:[
+    '夜里。西屋。十五瓦的灯泡，黄。',
+    '桌上摊着稿纸——老纪给的那半版报纸裁的，二十四张，还剩十九张。',
+    '你知道这摞纸底下压着什么。',
+    '腊月里的信。娘的字。六行。',
+    '三个月零五天了。',
+    '你替别人写了千把封信。自己这几句，你说配不上邮资。'
+  ],
+  choices:[
+    {t:'动笔',go:'d6_letter',fx:{flag:'letter_written'}},
+    {t:'把稿纸摞齐，压回去',go:'d6_nolitter',fx:{mood:-1}}
+  ]
+},
+'d6_letter':{
+  text:[
+    '笔蘸了墨。',
+    '第一行——',
+    '你和娘之间隔着六行腊月的信，隔了三个月零五天。第一行得先把这层纸捅开，还不能捅疼了。'
+  ],
+  choices:[
+    {t:'"娘。见字如面。"',go:'d6_letter_w',fx:{flag:'letter_formal'}},
+    {t:'"娘。天暖了。"',go:'d6_letter_w',fx:{flag:'letter_short'}}
+  ]
+},
+'d6_letter_w':{
+  text:[
+    '第二行你写：屋里都好。摊子支起来了，在邮局西墙根，牌子自己写的。识字的人打门口过，认得。',
+    '写到这里你停了停。',
+    '工钱的事。厂里欠的那十六块——写不写？'
+  ],
+  choices:[
+    {t:'写上。轻着写',go:'d6_letter_end',fx:{flag:'letter_money'}},
+    {t:'不写。这个不配进这封信',go:'d6_letter_end'}
+  ]
+},
+'d6_letter_end':{
+  text:[
+    '信不长。两页不到。',
+    '落款："儿 有信"。顿了顿，添上日期：一九九五年四月一日。',
+    '装进信封，压在墨水瓶底下。',
+    '明儿一早去老纪那儿贴邮票。外埠，两毛。',
+    '三个月零五天——从今儿晚上起，这个数不用再往上数了。'
+  ],
+  fx:{mood:2},
+  choices:[{t:'记账，睡',go:'d6_end'}]
+},
+'d6_nolitter':{
+  text:[
+    '稿纸摞齐了，压回桌角。',
+    '灯拉了。黑里头，院里高师傅咳嗽一声——两声里的尾音。',
+    '三个月零五天。这个数，明儿还得接着数。'
+  ],
+  choices:[{t:'睡',go:'d6_end'}]
+},
+'d6_end':{
+  dayend:true,
+  text:[
+    '记账。'
+  ]
+}
+};
+
+/* ================= 引擎 ================= */
+const $=id=>document.getElementById(id);
+let st=null;
+
+const NEW_GAME={scene:'d6_wake',money:1.95,food:5,health:6,mood:4,
+  rel:{gao:3,ma:5,pi:3,ji:4,bai:3,jian:2},flags:{}};
+
+function save(){try{localStorage.setItem('jldh_save',JSON.stringify(st));}catch(e){}}
+function loadSave(){try{const s=localStorage.getItem('jldh_save');return s?JSON.parse(s):null;}catch(e){return null;}}
+
+function applyFx(fx){
+  if(!fx)return;
+  if(fx.money)st.money=Math.round((st.money+fx.money)*100)/100;
+  if(fx.mood)st.mood=Math.max(0,Math.min(10,st.mood+fx.mood));
+  if(fx.food)st.food=Math.max(0,Math.min(10,st.food+fx.food));
+  if(fx.health)st.health=Math.max(0,Math.min(10,st.health+fx.health));
+  if(fx.rel_gao)st.rel.gao+=fx.rel_gao;
+  if(fx.rel_ma)st.rel.ma+=fx.rel_ma;
+  if(fx.rel_pi)st.rel.pi+=fx.rel_pi;
+  if(fx.rel_ji)st.rel.ji+=fx.rel_ji;
+  if(fx.flag)st.flags[fx.flag]=true;
+}
+
+function showScene(id){
+  const sc=SCENES[id];
+  if(!sc){$('gText').innerHTML='<p>（这一页还没写。）</p>';$('gChoices').innerHTML='';return;}
+  $('gDate').innerHTML='<b>'+DAY.date+'</b> · '+DAY.week+' · '+DAY.weather+' · 第'+DAY.num+'天';
+  $('gStat').innerHTML=
+    '<span>钱 <b>'+st.money.toFixed(2)+'</b></span>'+
+    '<span>食 <b>'+st.food+'</b>/10</span>'+
+    '<span>健 <b>'+st.health+'</b>/10</span>'+
+    '<span>心 <b>'+st.mood+'</b>/10</span>';
+  let html='';
+  sc.text.forEach(t=>{html+='<p>'+t+'</p>';});
+  $('gText').innerHTML=html;
+
+  const ch=$('gChoices');
+  ch.innerHTML='';
+  if(sc.dayend){ch.innerHTML=dayEndHtml();return;}
+  sc.choices.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='choice';b.textContent=c.t;
+    b.onclick=()=>{applyFx(c.fx);st.scene=c.go;save();showScene(st.scene);};
+    ch.appendChild(b);
+  });
+  window.scrollTo(0,0);
+}
+
+function dayEndHtml(){
+  const f=st.flags;
+  st.money=Math.round((st.money+0.7-0.3)*100)/100;save();
+  const items=[
+    ['家信', f.letter_written?'■ 写好了，压在墨水瓶底下。明早贴邮票（两毛）':'□ 三个月零五天。还没动笔',f.letter_written],
+    ['房租二十五', f.rent_talked?'■ 说好月中一并给':'□ 还没开口',f.rent_talked],
+    ['工钱十六块','□ 王会计说"过阵子"',false],
+    ['牙','□ 不跳了，白天还木',false],
+    ['账上的洞（第2天）','□ 少收两毛，数记不得了',false],
+    ['马婶家的往后','□ 老马躺着。信寄了。往后不知道',false],
+    ['高师傅的咳','□ "开春都这样。"问的全部所得',false]
+  ];
+  let h='<div class="dayend"><h3>—— 第6天 完 ——</h3>';
+  h+='<p class="fx-tip">记帐：收七毛，支三毛。结存 '+st.money.toFixed(2)+'。</p>';
+  h+='<h3 style="letter-spacing:2px;font-size:13px">未了事项</h3><ul>';
+  items.forEach(it=>{h+='<li class="'+(it[2]?'done':'')+'"><b>'+it[0]+'</b>　'+it[1]+'</li>';});
+  h+='</ul>';
+  h+='<div class="next">第7天 · 还没来</div>';
+  h+='<p style="margin-top:10px;font-size:12px;color:var(--mut)">（这个摊子慢慢支。内容往后一笔一笔添。）</p></div>';
+  return h;
+}
+
+/* ================= 启动 ================= */
+const saved=loadSave();
+if(saved){$('btnCont').style.display='';}
+$('btnStart').style.display='';
+$('btnStart').onclick=()=>{
+  if(loadSave()){if(!confirm('重新开始会覆盖现在的进度。生活没有读档——确定吗？'))return;}
+  st=JSON.parse(JSON.stringify(NEW_GAME));save();
+  $('title').style.display='none';$('game').style.display='block';
+  showScene(st.scene);
+};
+$('btnCont').onclick=()=>{
+  st=loadSave();
+  $('title').style.display='none';$('game').style.display='block';
+  showScene(st.scene);
+};
+</script>
+</body>
+</html>
