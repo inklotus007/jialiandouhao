@@ -73,6 +73,7 @@
 /* ================= 场景数据 ================= */
 /* 第6天起。第1-5天是"已经发生过的事"。 */
 const DAY={num:6,date:'1995年4月1日',week:'周六',weather:'晴，风软'};
+const DAY7={num:7,date:'1995年4月2日',week:'周日',weather:'晴，风软'};
 
 const SCENES={
 'd6_wake':{
@@ -243,6 +244,227 @@ const SCENES={
   text:[
     '记账。'
   ]
+},
+
+/* ============ 第7天 · 4月2日 周日 ============ */
+'d7_wake':{
+  day:DAY7,fx:{health:1},
+  text:[
+    '四月二号，周日。晴，风比昨天软。',
+    '东屋的咳，两声，比昨天松。也可能是你听惯了。',
+    '右脸那点木，摸着轻了——快好利索的兆头。',
+    '墨水瓶挪在桌角。底下空出来的那块，看着比别处干净。',
+    '信在信封里。昨儿夜里就不数了——可你睁眼头一件事，还是算了算日子。',
+    '算完才明白：数没停，换了个数法。现在数的是，信到家里得几天。'
+  ],
+  choices:[{t:'趁早，去邮局',go:'d7_post'}]
+},
+'d7_post':{
+  day:DAY7,
+  text:[
+    '邮局八点开门，你七点五十到的。',
+    '老纪在柜台里拆一封信，郑州的邮戳。看见你，把信扣在算盘底下。',
+    '"寄信？"',
+    '你把信封放上去。他在手里掂了掂，看了一眼收信地址——乡下。这种地址他一天经手几十个，没说什么。',
+    '"外埠。两毛。"',
+    '你数给他一张两毛——昨天汇款单上挣的，票面还平。',
+    '他撕邮票，推过来浆糊碗：',
+    '"封好了？"'
+  ],
+  choices:[
+    {t:'封好了。（贴邮票）',go:'d7_stamp'},
+    {t:'稍等——拆开再看一遍',go:'d7_reread'}
+  ]
+},
+'d7_reread':{
+  day:DAY7,
+  text:[
+    '你把信封拿了回来。老纪看着你拆——封口的浆糊没干透，好揭。',
+    '两页不到，站着看完的。',
+    '看完了，说不上多出什么。写的时候，每个字都是替娘的眼睛写的；这会儿才想起来——娘读信的时候，想的是你腊月走时的那场雪。',
+    '看不准的东西，拆一遍也看不准。',
+    '重新封上。这回的口，比昨晚的齐。'
+  ],
+  choices:[{t:'贴邮票',go:'d7_stamp'}]
+},
+'d7_stamp':{
+  day:DAY7,fx:{flag:'letter_sent',mood:1},
+  text:[
+    '浆糊碗边上结了点皮，筷子搅开。',
+    '邮票贴右上角——替别人贴了几百张，都是这个位置。今天这张，抹了三遍才平。',
+    '老纪接过去，戳子蘸了印泥：',
+    '"外埠，慢五天快三天。"',
+    '戳子落下去，跟给谁的都一样。',
+    '信进了格子，跟早班的邮件捆在一处。'
+  ],
+  choices:[{t:'出摊',go:'d7_hand'}]
+},
+'d7_hand':{
+  day:DAY7,
+  text:[
+    '出来，太阳上来了。你在台阶上站了一会儿——三个月，早起心里都压着这个事。今天它走了。',
+    '心里那个数换了个方向，还在走：慢五天快三天。今天，算第一天。',
+    '西墙根。桌腿垫砖，牌子挂上。',
+    '上午一张汇款单，两毛。礼拜天，南边往家寄钱的还是多。'
+  ],
+  choices:[{t:'晌午过后',go:'d7_build'}]
+},
+'d7_build':{
+  day:DAY7,
+  text:[
+    '晌午过后，一个高个子进了邮局，出来的时候手里是空的。',
+    '建生。礼拜日，他来取信取咸菜。',
+    '他在柜台前又站了一会儿，出来，站在台阶上。',
+    '信没到——他爸的回信，路远。咸菜也没到——你想起来马婶那句"有自己的辙"。辙走到哪儿了，你不知道。',
+    '他站在台阶上，脸冲着街。'
+  ],
+  choices:[
+    {t:'叫他一声',go:'d7_build_talk',fx:{rel_jian:1}},
+    {t:'低头，写你的字',go:'d7_build_leave',fx:{mood:-1}}
+  ]
+},
+'d7_build_talk':{
+  day:DAY7,
+  text:[
+    '"建生。"',
+    '他过来了。两步就到摊前——腿长，人瘦，蓝褂子洗得发白。',
+    '"礼拜天。"',
+    '"嗯。"',
+    '"课紧不紧？"',
+    '"嗯。紧。下礼拜期中。"',
+    '"吃得咋样？一中的灶。"',
+    '"嗯。还行。灶上有时没菜。"',
+    '话到这儿又没了。你替他爸写过信，替他妈写过急信。这孩子跟你，就隔着那几张纸。',
+    '他看了看你的牌子，看了一眼，说："俺走了。"',
+    '一个礼拜，从一中走到十字街，一个来回。'
+  ],
+  choices:[{t:'下午接着坐摊',go:'d7_afternoon'}]
+},
+'d7_build_leave':{
+  day:DAY7,
+  text:[
+    '你低头写你的字。',
+    '一个"安"字写了三遍——上回把捺写歪，这回手不歪。心不在。',
+    '等你再抬头，台阶上没人了。',
+    '街上的日头照着，邮局门口来来去去。他走的时候什么样，你没看着。',
+    '没看着的，记不成。'
+  ],
+  choices:[{t:'下午接着坐摊',go:'d7_afternoon'}]
+},
+'d7_afternoon':{
+  day:DAY7,
+  text:()=>[
+    '下午来了个老太太，拐棍点着地，山西来的信——儿子在煤窑上。',
+    '"给俺念念。"',
+    '你念。念到"娘身子骨还好"，老太太把手里的帕子攥紧了些。',
+    '"他小时候就细心。"',
+    '念完，一毛。她数钱数得慢，一个一个数给你。',
+    '念完了她没急着走，坐着。你也坐着。日头从西墙挪到桌腿。',
+    st.flags.letter_sent
+      ?'上午你自己的信，也是从这个门口进去的。'
+      :'绿邮筒的口在台阶边上开着，日头照进去半截。'
+  ],
+  choices:[{t:'收摊',go:'d7_swallows'}]
+},
+'d7_swallows':{
+  day:DAY7,fx:{mood:1},
+  text:[
+    '收摊的时候抬头——门楼底下有燕子。',
+    '两只，绕着飞。旧窝还在，掉了半边泥。它们落在电线上，蹲着，没开工。',
+    '皮三那边叮叮当当收家伙："看啥呢，宋大学？"',
+    '"燕子回来了。"',
+    '"哦。"他抬头瞅了一眼，"回来了。"',
+    '你摘牌子的时候，两只燕子还在电线上蹲着。'
+  ],
+  choices:()=>[{t:'回屋',go:st.flags.letter_sent?'d7_night':'d7_night_x'}]
+},
+'d7_night':{
+  day:DAY7,
+  text:[
+    '夜里。记帐。',
+    '墨水瓶搁回原位。底下那块地方空了三个月，今晚头一回，空得踏实——东西在路上。',
+    '稿纸还剩十九张。',
+    '黄历翻到四月。清明，还有三天。',
+    '三年没回去上坟了。今年的清明，娘一个人去。',
+    '信在路上。快的话清明当天到，慢的话清明刚过——娘上完坟回来，信在。也行。'
+  ],
+  choices:[{t:'睡',go:'d7_end'}]
+},
+
+/* ---- 第7天 · 没写信的线 ---- */
+'d7_wake_x':{
+  day:DAY7,fx:{health:1},
+  text:[
+    '四月二号，周日。晴。',
+    '桌上稿纸摞得齐。摞得越齐，越说明没动。',
+    '三个月零六天。',
+    '出摊，路过邮局，绿邮筒开着口。你在台阶下站了半步——没上去。',
+    '东屋的咳，两声，比昨天松。也可能是你听惯了。',
+    '上午一张汇款单，两毛。'
+  ],
+  choices:[{t:'晌午过后',go:'d7_build'}]
+},
+'d7_night_x':{
+  day:DAY7,
+  text:[
+    '夜里。稿纸还是十九张。',
+    '黄历上，清明还有三天。娘的信在纸底下压着——腊月的六行，三个月零六天。',
+    '今天建生空着手走的。你的信，还在这儿躺着。'
+  ],
+  choices:[
+    {t:'动笔',go:'d7_letter',fx:{flag:'letter_written'}},
+    {t:'再压一天',go:'d7_sleep_x',fx:{mood:-1}}
+  ]
+},
+'d7_sleep_x':{
+  day:DAY7,
+  text:[
+    '稿纸摞得更齐了。',
+    '明天，三个月零七天。',
+    '睡。'
+  ],
+  choices:[{t:'——',go:'d7_end'}]
+},
+'d7_letter':{
+  day:DAY7,
+  text:[
+    '笔蘸了墨。',
+    '第一行——',
+    '今天建生空着手走了。你的信，不能再躺过清明。'
+  ],
+  choices:[
+    {t:'"娘。见字如面。"',go:'d7_letter_w',fx:{flag:'letter_formal'}},
+    {t:'"娘。天暖了。"',go:'d7_letter_w',fx:{flag:'letter_short'}}
+  ]
+},
+'d7_letter_w':{
+  day:DAY7,
+  text:[
+    '第二行你写：屋里都好。摊子支起来了，在邮局西墙根，牌子自己写的。识字的人打门口过，认得。',
+    '写到这里你停了停。',
+    '工钱的事。厂里欠的那十六块——写不写？'
+  ],
+  choices:[
+    {t:'写上。轻着写',go:'d7_letter_end',fx:{flag:'letter_money'}},
+    {t:'不写。这个不配进这封信',go:'d7_letter_end'}
+  ]
+},
+'d7_letter_end':{
+  day:DAY7,fx:{mood:2},
+  text:[
+    '信不长。两页不到。',
+    '落款："儿 有信"。顿了顿，添上日期：一九九五年四月二日。',
+    '装进信封，压在墨水瓶底下。',
+    '明儿一早去老纪那儿贴邮票。外埠，两毛。',
+    '三个月零六天——从今儿晚上起，这个数不用再往上数了。'
+  ],
+  choices:[{t:'睡',go:'d7_end'}]
+},
+'d7_end':{
+  dayend:true,day:DAY7,
+  text:[
+    '记账。'
+  ]
 }
 };
 
@@ -272,20 +494,24 @@ function applyFx(fx){
 function showScene(id){
   const sc=SCENES[id];
   if(!sc){$('gText').innerHTML='<p>（这一页还没写。）</p>';$('gChoices').innerHTML='';return;}
-  $('gDate').innerHTML='<b>'+DAY.date+'</b> · '+DAY.week+' · '+DAY.weather+' · 第'+DAY.num+'天';
+  if(sc.fx&&st._fxed!==id){applyFx(sc.fx);st._fxed=id;save();}
+  const day=sc.day||DAY;
+  $('gDate').innerHTML='<b>'+day.date+'</b> · '+day.week+' · '+day.weather+' · 第'+day.num+'天';
   $('gStat').innerHTML=
     '<span>钱 <b>'+st.money.toFixed(2)+'</b></span>'+
     '<span>食 <b>'+st.food+'</b>/10</span>'+
     '<span>健 <b>'+st.health+'</b>/10</span>'+
     '<span>心 <b>'+st.mood+'</b>/10</span>';
   let html='';
-  sc.text.forEach(t=>{html+='<p>'+t+'</p>';});
+  const lines=typeof sc.text==='function'?sc.text():sc.text;
+  lines.forEach(t=>{html+='<p>'+t+'</p>';});
   $('gText').innerHTML=html;
 
   const ch=$('gChoices');
   ch.innerHTML='';
-  if(sc.dayend){ch.innerHTML=dayEndHtml();return;}
-  sc.choices.forEach(c=>{
+  if(sc.dayend){ch.innerHTML=dayEndHtml(id);return;}
+  const chs=typeof sc.choices==='function'?sc.choices():sc.choices;
+  chs.forEach(c=>{
     const b=document.createElement('button');
     b.className='choice';b.textContent=c.t;
     b.onclick=()=>{applyFx(c.fx);st.scene=c.go;save();showScene(st.scene);};
@@ -294,26 +520,69 @@ function showScene(id){
   window.scrollTo(0,0);
 }
 
-function dayEndHtml(){
+function dayEndHtml(id){
   const f=st.flags;
-  st.money=Math.round((st.money+0.7-0.3)*100)/100;save();
-  const items=[
-    ['家信', f.letter_written?'■ 写好了，压在墨水瓶底下。明早贴邮票（两毛）':'□ 三个月零五天。还没动笔',f.letter_written],
-    ['房租二十五', f.rent_talked?'■ 说好月中一并给':'□ 还没开口',f.rent_talked],
-    ['工钱十六块','□ 王会计说"过阵子"',false],
-    ['牙','□ 不跳了，白天还木',false],
-    ['账上的洞（第2天）','□ 少收两毛，数记不得了',false],
-    ['马婶家的往后','□ 老马躺着。信寄了。往后不知道',false],
-    ['高师傅的咳','□ "开春都这样。"问的全部所得',false]
-  ];
-  let h='<div class="dayend"><h3>—— 第6天 完 ——</h3>';
-  h+='<p class="fx-tip">记帐：收七毛，支三毛。结存 '+st.money.toFixed(2)+'。</p>';
+  const key='_settled_'+id;
+  let settleTip='';
+  if(!f[key]){
+    if(id==='d6_end'){
+      st.money=Math.round((st.money+0.7-0.3)*100)/100;
+      settleTip='记帐：收七毛，支三毛。';
+    }else if(id==='d7_end'){
+      const stamp=f.letter_sent?0.2:0;
+      st.money=Math.round((st.money+0.3-0.2-stamp)*100)/100;
+      settleTip=f.letter_sent
+        ?'记帐：收三毛（汇款单两毛、念信一毛），支四毛（邮票两毛、嚼谷两毛）。'
+        :'记帐：收三毛（汇款单两毛、念信一毛），支两毛。';
+    }
+    f[key]=true;save();
+  }
+  let items,dayTitle;
+  if(id==='d6_end'){
+    dayTitle='第6天 完';
+    items=[
+      ['家信', f.letter_written?'■ 写好了，压在墨水瓶底下。明早贴邮票（两毛）':'□ 三个月零五天。还没动笔',f.letter_written],
+      ['房租二十五', f.rent_talked?'■ 说好月中一并给':'□ 还没开口',f.rent_talked],
+      ['工钱十六块','□ 王会计说"过阵子"',false],
+      ['牙','□ 不跳了，白天还木',false],
+      ['账上的洞（第2天）','□ 少收两毛，数记不得了',false],
+      ['马婶家的往后','□ 老马躺着。信寄了。往后不知道',false],
+      ['高师傅的咳','□ "开春都这样。"问的全部所得',false]
+    ];
+  }else{
+    dayTitle='第7天 完';
+    items=[
+      ['家信', f.letter_sent
+        ?'■ 在路上。慢五天快三天，今天算第一天'
+        :(f.letter_written?'■ 写好了，明早贴邮票（两毛）':'□ 三个月零六天'),
+        f.letter_sent||f.letter_written],
+      ['房租二十五', f.rent_talked?'■ 说好月中一并给':'□ 月中之前，得开口',f.rent_talked],
+      ['工钱十六块','□ 王会计说"过阵子"',false],
+      ['牙','□ 木见薄，快利索了',false],
+      ['账上的洞（第2天）','□ 少收两毛，数记不得了',false],
+      ['马婶家的往后','□ 建生今天来取信，空着手。他知道多少？',false],
+      ['高师傅的咳','□ 比昨天松——也可能是听惯了',false],
+      ['燕子','■ 回来了两只。窝没重筑，蹲在电线上',true]
+    ];
+  }
+  let h='<div class="dayend"><h3>—— '+dayTitle+' ——</h3>';
+  if(settleTip)h+='<p class="fx-tip">'+settleTip+'结存 '+st.money.toFixed(2)+'。</p>';
+  else h+='<p class="fx-tip">结存 '+st.money.toFixed(2)+'。</p>';
   h+='<h3 style="letter-spacing:2px;font-size:13px">未了事项</h3><ul>';
   items.forEach(it=>{h+='<li class="'+(it[2]?'done':'')+'"><b>'+it[0]+'</b>　'+it[1]+'</li>';});
   h+='</ul>';
-  h+='<div class="next">第7天 · 还没来</div>';
-  h+='<p style="margin-top:10px;font-size:12px;color:var(--mut)">（这个摊子慢慢支。内容往后一笔一笔添。）</p></div>';
-  return h;
+  if(id==='d6_end'){
+    h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第7天</button></div>';
+  }else{
+    h+='<div class="next">第8天 · 还没来</div>';
+    h+='<p style="margin-top:10px;font-size:12px;color:var(--mut)">（这个摊子慢慢支。内容往后一笔一笔添。）</p>';
+  }
+  return h+'</div>';
+}
+
+function nextDay(){
+  st.scene=st.flags.letter_written?'d7_wake':'d7_wake_x';
+  save();showScene(st.scene);
 }
 
 /* ================= 启动 ================= */
