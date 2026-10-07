@@ -43,18 +43,46 @@
   .dayend li.done:before{content:'■ ';color:var(--accent)}
   .dayend .next{margin-top:12px;color:var(--mut);font-size:12px;letter-spacing:2px}
   .fx-tip{font-size:12px;color:var(--mut);margin-bottom:18px;letter-spacing:1px}
+
+  /* ===== 玩家选择 ===== */
+  #picker{display:none;min-height:60vh;padding-top:8vh}
+  #picker h2{font-size:20px;letter-spacing:6px;font-weight:900;text-align:center;margin-bottom:6px}
+  #picker .psub{color:var(--mut);font-size:12px;text-align:center;letter-spacing:2px;margin-bottom:26px}
+  .plist{display:flex;flex-direction:column;gap:10px;max-width:360px;margin:0 auto}
+  .pitem{background:none;border:1px solid #a89a7e;padding:12px 16px;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);font-size:15px;width:100%}
+  .pitem:active{background:var(--ink);color:var(--paper)}
+  .pitem .pn{font-weight:600;letter-spacing:2px}
+  .pitem .pm{font-size:12px;color:var(--mut);margin-top:2px}
+  .pitem:active .pm{color:var(--paper)}
+  .pnew{border-style:dashed;color:var(--mut);text-align:center}
+  #picker .foot{text-align:center;margin-top:30px;font-size:11px;color:var(--mut)}
+  #picker .foot a{color:var(--mut);cursor:pointer;text-decoration:underline}
+  /* ===== 提示条/配置弹窗 ===== */
+  #cfgbar{background:#efe9db;border:1px solid var(--line);color:var(--mut);font-size:12px;padding:7px 10px;text-align:center;cursor:pointer;margin-bottom:6px;letter-spacing:1px;line-height:1.7}
+  #cmodal{display:none;position:fixed;inset:0;background:rgba(43,38,32,.45);z-index:9;align-items:center;justify-content:center;padding:20px}
+  #cbox{background:var(--paper);border:1px solid var(--ink);padding:22px 20px;max-width:400px;width:100%}
+  #cbox h3{font-size:15px;letter-spacing:3px;margin-bottom:10px}
+  #cbox p{font-size:12px;color:var(--mut);line-height:1.8;margin-bottom:10px}
+  #cbox textarea{width:100%;border:1px solid #a89a7e;background:none;font-family:inherit;font-size:12px;padding:9px 10px;margin-bottom:10px;height:84px;resize:vertical;line-height:1.6}
+  #cbox .row{display:flex;gap:10px}
+  #cbox button{flex:1;background:none;border:1px solid var(--ink);color:var(--ink);font-family:inherit;font-size:13px;padding:9px;cursor:pointer;letter-spacing:2px}
+  #cbox .msg{font-size:12px;margin-top:8px;color:var(--mut);min-height:18px;line-height:1.7}
+  .who{font-size:11px;color:var(--mut);margin-top:5px;letter-spacing:1px}
+  .who a{cursor:pointer;text-decoration:underline}
+
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <div id="cfgbar" style="display:none" onclick="openCfg()">未配云端令牌——进度只存本机，换设备带不走。<br>点这里配置，多人各存各的，云端同步。</div>
 
   <div id="title">
     <h1>家里都好</h1>
     <div class="sub">一九九五年 · 豫北县城 · 代写书信摊</div>
     <div class="rule"></div>
     <div class="btns">
-      <button class="tbtn" id="btnStart" style="display:none">开 始</button>
-      <button class="tbtn" id="btnCont" style="display:none">继 续</button>
+      <button class="tbtn" id="btnEnter" style="display:none">进 摊</button>
     </div>
     <div class="note">你替全城人写"家里都好"。<br>你自己的那封，压了三个月零五天。<br><br>生活没有读档，这场里也没有。</div>
   </div>
@@ -63,11 +91,33 @@
     <div class="top">
       <div class="date" id="gDate"></div>
       <div class="stat" id="gStat"></div>
+      <div class="who">执笔：<b id="gPlayer"></b> · <a onclick="switchPlayer()">换人</a> <span id="cloudDot"></span></div>
     </div>
     <div class="story" id="gText"></div>
     <div class="choices" id="gChoices"></div>
   </div>
 
+  <div id="picker">
+    <h2>谁 在 写</h2>
+    <div class="psub">各写各的，进度互不相扰。</div>
+    <div class="plist" id="pList"></div>
+    <div class="foot"><a onclick="openCfg()">云端设置</a></div>
+  </div>
+
+</div>
+
+<div id="cmodal">
+  <div id="cbox">
+    <h3>云 端 设 置</h3>
+    <p>贴一个 GitHub 令牌（fine-grained，需包含本仓库 jialiandouhao 的 Contents 读写权限）。<br>
+    配好后：每人一个存档，云端同步，换设备接着写。<br>不配置也能玩——进度只存本机。</p>
+    <textarea id="tokIn" placeholder="github_pat_ 开头的令牌贴这里"></textarea>
+    <div class="row">
+      <button onclick="saveCfg()">存 并 试 连</button>
+      <button onclick="closeCfg()">关 闭</button>
+    </div>
+    <div class="msg" id="cfgMsg"></div>
+  </div>
 </div>
 <script>
 /* ================= 场景数据 ================= */
@@ -475,8 +525,203 @@ let st=null;
 const NEW_GAME={scene:'d6_wake',money:1.95,food:5,health:6,mood:4,
   rel:{gao:3,ma:5,pi:3,ji:4,bai:3,jian:2},flags:{}};
 
-function save(){try{localStorage.setItem('jldh_save',JSON.stringify(st));}catch(e){}}
-function loadSave(){try{const s=localStorage.getItem('jldh_save');return s?JSON.parse(s):null;}catch(e){return null;}}
+/* ================= 云端存档 ================= */
+const REPO='inklotus007/jialiandouhao';
+const shaCache={};
+let player=null,cloudOn=false,pushTimer=null;
+
+function b64u(b64){const bin=atob(b64.replace(/\n/g,''));const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u);}
+function b64e(str){const u=new TextEncoder().encode(str);let b='';u.forEach(c=>b+=String.fromCharCode(c));return btoa(b);}
+function ghH(){return{'Authorization':'bearer '+localStorage.getItem('jldh_token'),'Accept':'application/vnd.github+json','User-Agent':'jldh-game'};}
+function ghPath(p){return 'https://api.github.com/repos/'+REPO+'/contents/'+p.split('/').map(encodeURIComponent).join('/');}
+
+async function ghGet(p){
+  const r=await fetch(ghPath(p),{headers:ghH()});
+  if(r.status===404)return null;
+  if(!r.ok)throw new Error('GET '+r.status);
+  const d=await r.json();
+  shaCache[p]=d.sha;
+  return {data:JSON.parse(b64u(d.content))};
+}
+async function ghPut(p,obj){
+  const body={message:'档：'+p.split('/').pop(),content:b64e(JSON.stringify(obj))};
+  if(shaCache[p])body.sha=shaCache[p];
+  const opt=()=>({method:'PUT',headers:{...ghH(),'Content-Type':'application/json'},body:JSON.stringify(body)});
+  let r=await fetch(ghPath(p),opt());
+  if(r.status===422||r.status===409){
+    const g=await ghGet(p).catch(()=>null);
+    if(g)body.sha=g.sha;else delete body.sha;
+    r=await fetch(ghPath(p),opt());
+  }
+  if(!r.ok)throw new Error('PUT '+r.status);
+  const d=await r.json();
+  shaCache[p]=d.content.sha;
+}
+
+/* ---------- 玩家/档 ---------- */
+function localPlayers(){
+  const out={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.indexOf('jldh_save_')===0){
+      const name=decodeURIComponent(k.slice(10));
+      try{const d=JSON.parse(localStorage.getItem(k));
+        out[name]={day:(SCENES[d.scene]&&SCENES[d.scene].day||DAY).num,local:true};}catch(e){}
+    }
+  }
+  return out;
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtTime(iso){
+  const m=Math.round((Date.now()-new Date(iso))/60000);
+  if(m<1)return'刚刚';if(m<60)return m+'分钟前';
+  if(m<1440)return Math.round(m/60)+'小时前';
+  return Math.round(m/1440)+'天前';
+}
+
+function save(){
+  if(!st)return;
+  try{localStorage.setItem('jldh_save_'+encodeURIComponent(player),JSON.stringify(st));}catch(e){}
+  if(cloudOn){clearTimeout(pushTimer);pushTimer=setTimeout(pushSave,1200);}
+}
+async function pushSave(){
+  if(!st||!player||!cloudOn)return;
+  try{
+    await ghPut('saves/'+player+'.json',st);
+    let g;
+    try{g=await ghGet('saves/index.json');}catch(e){g=undefined;} // 网络错不动index，防覆盖别人条目
+    if(g===undefined)throw new Error('index读失败');
+    const idx=g?g.data:{players:{}};
+    idx.players[player]={day:(SCENES[st.scene]&&SCENES[st.scene].day||DAY).num,scene:st.scene,updated:new Date().toISOString()};
+    await ghPut('saves/index.json',idx);
+    $('cloudDot').textContent='';
+  }catch(e){$('cloudDot').textContent='· 云端未同步';}
+}
+
+/* ---------- 玩家选择 ---------- */
+async function showPicker(){
+  $('title').style.display='none';$('game').style.display='none';$('picker').style.display='block';
+  window.scrollTo(0,0);
+  const L=$('pList');
+  L.innerHTML='<div style="text-align:center;color:var(--mut);font-size:13px;padding:8px">翻档中……</div>';
+  let players={};
+  if(cloudOn){
+    try{const g=await ghGet('saves/index.json');players=g?g.data.players:{};}
+    catch(e){L.innerHTML='<div style="text-align:center;color:var(--accent);font-size:13px;padding:8px">云端读不上（'+esc(e.message)+'）。<br><a onclick="openCfg()" style="cursor:pointer;text-decoration:underline">检查令牌</a></div>';return;}
+  }else{
+    players=localPlayers();
+  }
+  const legacy=!!localStorage.getItem('jldh_save');
+  let h='';
+  const names=Object.keys(players);
+  if(!names.length)h+='<div style="text-align:center;color:var(--mut);font-size:13px;padding:6px">还没有人下笔。</div>';
+  names.forEach(n=>{
+    const p=players[n];
+    h+='<button class="pitem" data-n="'+esc(n)+'" onclick="pick(this.dataset.n)"><div class="pn">'+esc(n)+'</div><div class="pm">第'+p.day+'天'+(p.updated?' · '+fmtTime(p.updated):' · 只存本机')+'</div></button>';
+  });
+  if(legacy)h+='<button class="pitem" onclick="importLegacy()"><div class="pn">导入本机旧进度</div><div class="pm">检测到升级前的存档，进来认领</div></button>';
+  h+='<button class="pitem pnew" onclick="newPlayer()">＋ 新来一位</button>';
+  L.innerHTML=h;
+}
+async function pick(name){
+  try{
+    if(cloudOn){
+      const d=await loadCloudSave(name);
+      if(d){st=d;player=name;enterGame();return;}
+      alert('云端没找到「'+name+'」的档。');
+    }else{
+      const s=localStorage.getItem('jldh_save_'+encodeURIComponent(name));
+      if(s){st=JSON.parse(s);player=name;enterGame();return;}
+      alert('本机没找到「'+name+'」的档。');
+    }
+  }catch(e){alert('读档失败：'+e.message);}
+}
+async function loadCloudSave(name){
+  const g=await ghGet('saves/'+name+'.json');
+  return g?g.data:null;
+}
+function newPlayer(){
+  const name=(prompt('写个名字——谁在写：')||'').trim().replace(/['"\\/]/g,'');
+  if(!name)return;
+  createPlayer(name,null);
+}
+async function createPlayer(name,initState){
+  if(cloudOn){
+    let players={};
+    try{const g=await ghGet('saves/index.json');players=g?g.data.players:{};}catch(e){}
+    if(players[name]){
+      if(confirm('「'+name+'」已有云端档（第'+players[name].day+'天）。接着写？'))pick(name);
+      return;
+    }
+    let init=initState;
+    if(!init)init=migrateAsk();
+    st=init||JSON.parse(JSON.stringify(NEW_GAME));
+    player=name;enterGame();save();
+  }else{
+    const s=localStorage.getItem('jldh_save_'+encodeURIComponent(name));
+    if(s){if(confirm('本机已有「'+name+'」的档。接着写？'))pick(name);return;}
+    st=(initState||migrateAsk())||JSON.parse(JSON.stringify(NEW_GAME));
+    player=name;save();enterGame();
+  }
+}
+function migrateAsk(){
+  const old=localStorage.getItem('jldh_save');
+  if(!old)return null;
+  try{
+    const d=JSON.parse(old);
+    const day=(SCENES[d.scene]&&SCENES[d.scene].day||DAY).num;
+    if(confirm('发现升级前的旧进度（第'+day+'天）。\n导入为这位玩家的档吗？\n（取消=开新档，旧进度保留）')){
+      localStorage.removeItem('jldh_save');
+      return d;
+    }
+  }catch(e){}
+  return null;
+}
+function importLegacy(){
+  const old=localStorage.getItem('jldh_save');
+  if(!old)return;
+  const name=(prompt('这份旧进度是谁写的：')||'').trim().replace(/['"\\/]/g,'');
+  if(!name)return;
+  let d=null;try{d=JSON.parse(old);}catch(e){}
+  createPlayer(name,d).then(()=>{
+    if(player===name)localStorage.removeItem('jldh_save');
+  });
+}
+function switchPlayer(){
+  if(cloudOn){clearTimeout(pushTimer);pushSave();}
+  showPicker();
+}
+function enterGame(){
+  $('picker').style.display='none';$('title').style.display='none';$('game').style.display='block';
+  $('gPlayer').textContent=player;
+  showScene(st.scene);
+}
+
+/* ---------- 设置 ---------- */
+function openCfg(){
+  $('cmodal').style.display='flex';
+  $('tokIn').value=localStorage.getItem('jldh_token')||'';
+  $('cfgMsg').textContent='';
+}
+function closeCfg(){$('cmodal').style.display='none';}
+async function saveCfg(){
+  const t=$('tokIn').value.trim();
+  if(!t){$('cfgMsg').textContent='先把令牌贴进来。';return;}
+  localStorage.setItem('jldh_token',t);
+  $('cfgMsg').textContent='试连中……';
+  try{
+    await ghGet('saves/index.json').catch(()=>null); // 404=通（首次没有index）
+    cloudOn=true;
+    $('cmodal').style.display='none';
+    $('cfgbar').style.display='none';
+    showPicker();
+  }catch(e){
+    const m=String(e.message);
+    $('cfgMsg').textContent = m.indexOf('401')>-1 ? '令牌无效（401）。检查是否复制全。'
+      : m.indexOf('403')>-1 ? '令牌权限不够（403）。需要本仓库 Contents 读写。'
+      : '连不上：'+m;
+  }
+}
 
 function applyFx(fx){
   if(!fx)return;
@@ -586,20 +831,13 @@ function nextDay(){
 }
 
 /* ================= 启动 ================= */
-const saved=loadSave();
-if(saved){$('btnCont').style.display='';}
-$('btnStart').style.display='';
-$('btnStart').onclick=()=>{
-  if(loadSave()){if(!confirm('重新开始会覆盖现在的进度。生活没有读档——确定吗？'))return;}
-  st=JSON.parse(JSON.stringify(NEW_GAME));save();
-  $('title').style.display='none';$('game').style.display='block';
-  showScene(st.scene);
-};
-$('btnCont').onclick=()=>{
-  st=loadSave();
-  $('title').style.display='none';$('game').style.display='block';
-  showScene(st.scene);
-};
+(async function boot(){
+  $('btnEnter').style.display='';
+  $('btnEnter').onclick=()=>showPicker();
+  const tok=localStorage.getItem('jldh_token');
+  if(tok){
+    try{await ghGet('saves/index.json').catch(()=>null);cloudOn=true;}catch(e){cloudOn=false;}
+  }
+  if(!cloudOn)$('cfgbar').style.display='block';
+})();
 </script>
-</body>
-</html>
