@@ -70,6 +70,19 @@
   .who{font-size:11px;color:var(--mut);margin-top:5px;letter-spacing:1px}
   .who a{cursor:pointer;text-decoration:underline}
 
+  /* ===== 风闻墙 ===== */
+  .fw-mask{position:fixed;inset:0;background:rgba(20,16,10,.55);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+  .fw-mask.on{display:flex}
+  .fw-box{background:#f3ecd8;color:#3a2f1e;max-width:420px;width:100%;max-height:78vh;overflow-y:auto;
+    padding:22px 20px 18px;border:1px solid #c9b98d;box-shadow:0 8px 30px rgba(0,0,0,.35);font-family:"Noto Serif SC",serif}
+  .fw-title{font-size:13px;letter-spacing:3px;color:#8a7448;margin-bottom:12px;border-bottom:1px solid #d8caa4;padding-bottom:8px}
+  .fw-text{font-size:15px;line-height:2;min-height:120px;white-space:pre-wrap;word-break:break-all}
+  .fw-text .cur{border-right:6px solid #8a7448;animation:blink .9s steps(1) infinite}
+  @keyframes blink{50%{border-color:transparent}}
+  .fw-foot{margin-top:16px;display:flex;gap:10px;justify-content:space-between;align-items:center;border-top:1px solid #d8caa4;padding-top:10px}
+  .fw-foot a{color:#8a7448;font-size:13px;cursor:pointer;text-decoration:underline}
+  .fw-wait{color:#a08c5e;font-size:13px}
+  .fw-note{font-size:12px;color:#a08c5e;margin-top:8px}
 </style>
 </head>
 <body>
@@ -821,6 +834,7 @@ function dayEndHtml(id){
   }else{
     h+='<div class="next">第8天 · 还没来</div>';
     h+='<p style="margin-top:10px;font-size:12px;color:var(--mut)">（这个摊子慢慢支。内容往后一笔一笔添。）</p>';
+    h+='<p style="margin-top:6px;font-size:13px"><a class="fw-link" onclick="fwOpen()" style="color:#8a7448;cursor:pointer;text-decoration:underline">电线杆上新贴了一张纸，字歪歪扭扭 →</a></p>';
   }
   return h+'</div>';
 }
@@ -839,5 +853,74 @@ function nextDay(){
     try{await ghGet('saves/index.json').catch(()=>null);cloudOn=true;}catch(e){cloudOn=false;}
   }
   if(!cloudOn)$('cfgbar').style.display='block';
+})();
+</script>
+
+<script>
+/* ===== 风闻墙：小模型本地生成，不碰存档不碰场景 ===== */
+var FW = (function(){
+  var loaded = false, loading = false, busy = false, stops = [];
+  var prompts = ['兮','天','路','风','他爸说','不知道','是','而','作《','人','门','钱'];
+  function ensureLib(cb){
+    if(window.MiniGPT){ cb(); return; }
+    var s = document.createElement('script');
+    s.src = 'minigpt.js';
+    s.onload = cb;
+    document.head.appendChild(s);
+  }
+  function load(cb){
+    if(loaded){ cb(); return; }
+    if(loading){ stops.push(cb); return; }
+    loading = true;
+    ensureLib(function(){
+      fetch('minigpt_weights.json').then(function(r){ return r.json(); }).then(function(j){
+        MiniGPT.loadWeights(j);
+        loaded = true;
+        cb();
+        stops.forEach(function(f){ f(); }); stops = [];
+      }).catch(function(e){
+        loading = false;
+        document.getElementById('fwText').innerHTML = '<span class="fw-wait">（纸上的字一时认不出来。'+e.message+'）</span>';
+      });
+    });
+  }
+  function gen(){
+    if(busy || !loaded) return;
+    busy = true;
+    var el = document.getElementById('fwText');
+    var prompt = prompts[Math.floor(Math.random()*prompts.length)];
+    el.innerHTML = '';
+    var span = document.createElement('span');
+    var cur = document.createElement('span'); cur.className = 'cur';
+    el.appendChild(span); el.appendChild(cur);
+    MiniGPT.generate(prompt, 110, 0.9, 48, function(ch){
+      span.textContent += ch;
+      var box = document.getElementById('fwBox');
+      box.scrollTop = box.scrollHeight;
+    }, function(){
+      if(cur.parentNode) cur.remove();
+      busy = false;
+      document.getElementById('fwAgain').style.visibility = 'visible';
+    });
+    document.getElementById('fwAgain').style.visibility = 'hidden';
+  }
+  function open(){
+    var m = document.createElement('div');
+    m.className = 'fw-mask'; m.id = 'fwMask';
+    m.innerHTML = '<div class="fw-box" id="fwBox">'+
+      '<div class="fw-title">电 线 杆 上 的 纸</div>'+
+      '<div class="fw-text" id="fwText"><span class="fw-wait">（纸被风掀了一下……）</span></div>'+
+      '<div class="fw-foot"><span class="fw-wait">梁县字迹 · 本地生成</span>'+
+      '<span><a id="fwAgain" onclick="FW.gen()" style="visibility:hidden">再贴一张</a>　<a onclick="FW.close()">收回目光</a></span></div>'+
+      '<div class="fw-note">字是一个不识字的东西写的——它只学过「下一个字」。</div></div>';
+    document.body.appendChild(m);
+    requestAnimationFrame(function(){ m.classList.add('on'); });
+    load(function(){ setTimeout(gen, 300); });
+  }
+  function close(){
+    var m = document.getElementById('fwMask');
+    if(m) m.remove();
+  }
+  return { open: open, close: close, gen: gen };
 })();
 </script>
