@@ -137,6 +137,7 @@
 /* 第6天起。第1-5天是"已经发生过的事"。 */
 const DAY={num:6,date:'1995年4月1日',week:'周六',weather:'晴，风软'};
 const DAY7={num:7,date:'1995年4月2日',week:'周日',weather:'晴，风软'};
+const DAY8={num:8,date:'1995年4月3日',week:'周一',weather:'晴，杨棉起来了'};
 
 const SCENES={
 'd6_wake':{
@@ -528,6 +529,197 @@ const SCENES={
   text:[
     '记账。'
   ]
+},
+
+/* ---- 第8天 · 寄了的线 ---- */
+'d8_wake':{
+  day:DAY8,fx:{health:1},
+  text:[
+    '四月三号，周一。晴，杨棉起来了，飘得哪儿都是。',
+    '东屋的咳，一声。比前儿又松。',
+    '墨水瓶还在桌角，底下空着——信在那条路上。',
+    '数法换了：不数压了多少天，数还剩几天。快的话，后天到。'
+  ],
+  choices:[{t:'出摊',go:'d8_morning'}]
+},
+/* ---- 第8天 · 昨夜写了、今早寄的线 ---- */
+'d8_wake_p':{
+  day:DAY8,fx:{health:1},
+  text:[
+    '四月三号，周一。晴，杨棉起来了。',
+    '信封在桌上，浆糊口朝上——昨儿夜里封的。',
+    '东屋的咳，一声。比前儿又松。',
+    '趁早，去邮局。'
+  ],
+  choices:[{t:'去邮局',go:'d8_post'}]
+},
+'d8_post':{
+  day:DAY8,fx:{money:-0.2,flag:'letter_sent',mood:1},
+  text:[
+    '老纪开门头一个就是你。',
+    '两毛。戳子落下去，跟给谁的都一样。',
+    '信进了格子，往南去了。',
+    '心里那个数，从今儿起换了个方向：慢五天，快三天。'
+  ],
+  choices:[{t:'出摊',go:'d8_morning'}]
+},
+/* ---- 第8天 · 没写的线 ---- */
+'d8_wake_x':{
+  day:DAY8,fx:{health:1},
+  text:[
+    '四月三号，周一。晴，杨棉起来了，飘得哪儿都是。',
+    '桌上稿纸还是十九张。摞得齐。摞得越齐，越说明没动。',
+    '三个月零七天。',
+    '黄历：清明，还有两天。',
+    '东屋的咳，一声。比前儿又松。'
+  ],
+  choices:[{t:'出摊',go:'d8_morning'}]
+},
+
+/* ---- 第8天 · 共线 ---- */
+'d8_morning':{
+  day:DAY8,
+  text:[
+    '西墙根。垫砖，挂牌子。',
+    '街口来了个卖柳条的自行车，后座捆着两大捆——清明前，折柳的人多。斜对过支了个纸摊，黄纸一沓一沓，金银箔锭子码成垛。',
+    '杨棉落在墨水瓶上、落在纸角上。写字之前，先吹一口。',
+    '你去柜台取浆糊，老纪头也没抬：',
+    '"南边来的，明后天。"你知道他说的是马家——你惦记，他也记着。',
+    '晌午前，来了个老头。'
+  ],
+  choices:[{t:'——',go:'d8_jiwen'}]
+},
+'d8_jiwen':{
+  day:DAY8,
+  text:[
+    '干瘦，蓝布帽压得低，腋下夹着一沓黄纸。走到摊前，站定。',
+    '"先生，写一篇祭文。"',
+    '你起身让凳："您坐。"',
+    '老伴。三年了。姓周。老头姓陈，陈丰年——念出来是个种地的名字。',
+    '铺纸。祭文的体你有：维公元一九九五年四月五日，清明，陈丰年谨以香烛清酌之仪，致祭于亡妻周氏之灵前曰——',
+    '头起的套话写得快。敬香，上供，叩首。写到正文，笔停了。',
+    '"说啥，您说，我写。"',
+    '老头的手在膝盖上搓。半天："就说……她……"',
+    '你等。这个等，是这行的手艺。话没完，不接。',
+    '老头看着街上的杨棉。半天，说了一句：',
+    '"就写——你走那年栽的那棵椿树，今年发得好。"',
+    '就这一句。',
+    '你笔尖顿在纸上。'
+  ],
+  choices:[
+    {t:'照他的原话写',go:'d8_jiwen_plain'},
+    {t:'顺祭文的体，雅一雅',go:'d8_jiwen_elegant'}
+  ]
+},
+'d8_jiwen_plain':{
+  day:DAY8,fx:{mood:1,flag:'jiwen_plain'},
+  text:[
+    '四六句里落了一行白话："你走那年栽的那棵椿树，今年发得好。"',
+    '扎眼。可是他的话。',
+    '落款，吹干，念给老头听。',
+    '念到椿树那句，老头的手不搓了。',
+    '"就是这句。"',
+    '五毛。手绢一层一层打开，票面是新的。',
+    '老头把祭文折好，跟黄纸搁在一处，夹紧了。走了。蓝布帽压得低。'
+  ],
+  choices:[{t:'下午接着坐摊',go:'d8_swallows'}]
+},
+'d8_jiwen_elegant':{
+  day:DAY8,
+  text:[
+    '"汝手植之椿，今岁新荣，枝叶茂矣。"',
+    '落款，吹干，念给老头听。',
+    '念到椿树那句，老头没言语。念完，他把纸拿过去，凑近了看——看不大懂。又递回来。',
+    '"树那句，写了没？"',
+    '"写了。"',
+    '"嗯。"他把祭文折好，跟黄纸搁在一处。"俺信你写的。"',
+    '五毛。手绢一层一层打开，票面是新的。'
+  ],
+  choices:[{t:'下午接着坐摊',go:'d8_swallows'}]
+},
+'d8_swallows':{
+  day:DAY8,fx:{mood:1},
+  text:[
+    '下午没什么人。杨棉往摊子上落，你吹一口，写一个字。',
+    '收摊抬头——燕子不在电线上，在门楼里。',
+    '衔泥。一趟，又一趟。旧茬上压新泥，深一块浅一块。',
+    '皮三收拾家伙，也仰头看了一眼：',
+    '"补窝了。"',
+    '"嗯。"',
+    '两只燕子一趟一趟，从街这头到街那头。'
+  ],
+  choices:()=>[{t:'回屋',go:st.flags.letter_sent?'d8_night':'d8_night_x'}]
+},
+'d8_night_x':{
+  day:DAY8,
+  text:[
+    '夜里。记账。',
+    '黄历：清明，还有两天。',
+    '前儿个就该寄的——那班信，清明当天能到家。过去了。',
+    '现在寄，快也是清明后两三天。娘从坟上回来，冷锅冷灶过两天，信才到。',
+    '再往后，就不止是晚了。'
+  ],
+  choices:[
+    {t:'动笔',go:'d8_letter',fx:{flag:'letter_written'}},
+    {t:'再压一天',go:'d8_sleep_x',fx:{mood:-1}}
+  ]
+},
+'d8_letter':{
+  day:DAY8,
+  text:[
+    '笔蘸了墨。',
+    '稿纸抽了一张。十九张，剩十八。',
+    '第一行——'
+  ],
+  choices:[
+    {t:'"娘。清明到了，家里上坟了吧。"',go:'d8_letter_w',fx:{flag:'letter_qingming'}},
+    {t:'"娘。见字如面。"',go:'d8_letter_w',fx:{flag:'letter_formal'}}
+  ]
+},
+'d8_letter_w':{
+  day:DAY8,
+  text:[
+    '第二行你写：屋里都好。摊子支在邮局西墙根，风吹不着雨淋不着。',
+    '写到这里你停了停。',
+    '今天写了一篇祭文——写给不回信的人。你那封信，娘会回。'
+  ],
+  choices:[{t:'接着写',go:'d8_letter_end'}]
+},
+'d8_letter_end':{
+  day:DAY8,fx:{mood:2},
+  text:[
+    '信不长。落款："儿 有信"。添上日期：一九九五年四月三日。',
+    '装进信封，压在墨水瓶底下。',
+    '明儿一早，老纪那儿，两毛。',
+    '快的话，娘上完坟回来第三天，信到家。晚就晚两天——到了就行。'
+  ],
+  choices:[{t:'睡',go:'d8_end'}]
+},
+'d8_sleep_x':{
+  day:DAY8,
+  text:[
+    '稿纸还是十九张。',
+    '明天，清明前一天。',
+    '睡。'
+  ],
+  choices:[{t:'——',go:'d8_end'}]
+},
+'d8_night':{
+  day:DAY8,
+  text:[
+    '夜里。记账。',
+    '墨水瓶在桌角，底下空着——信在那条路上。',
+    '黄历：清明，还有两天。三年没回去上坟了。今年，娘还是一个人去。',
+    '今天那篇祭文，老头念给不回信的人听。你那封，娘会回。',
+    '睡。'
+  ],
+  choices:[{t:'——',go:'d8_end'}]
+},
+'d8_end':{
+  dayend:true,day:DAY8,
+  text:[
+    '记账。'
+  ]
 }
 };
 
@@ -794,6 +986,9 @@ function dayEndHtml(id){
       settleTip=f.letter_sent
         ?'记帐：收三毛（汇款单两毛、念信一毛），支四毛（邮票两毛、嚼谷两毛）。'
         :'记帐：收三毛（汇款单两毛、念信一毛），支两毛。';
+    }else if(id==='d8_end'){
+      st.money=Math.round((st.money+0.5-0.2)*100)/100;
+      settleTip='记帐：收五毛（祭文），支两毛（嚼谷）。邮票两毛，寄的时候付过了。';
     }
     f[key]=true;save();
   }
@@ -809,7 +1004,7 @@ function dayEndHtml(id){
       ['马婶家的往后','□ 老马躺着。信寄了。往后不知道',false],
       ['高师傅的咳','□ "开春都这样。"问的全部所得',false]
     ];
-  }else{
+  }else if(id==='d7_end'){
     dayTitle='第7天 完';
     items=[
       ['家信', f.letter_sent
@@ -824,6 +1019,21 @@ function dayEndHtml(id){
       ['高师傅的咳','□ 比昨天松——也可能是听惯了',false],
       ['燕子','■ 回来了两只。窝没重筑，蹲在电线上',true]
     ];
+  }else{
+    dayTitle='第8天 完';
+    items=[
+      ['家信', f.letter_sent
+        ?'■ 在路上。慢五天快三天'
+        :(f.letter_written?'■ 写好了，明早贴邮票（两毛）':'□ 三个月零七天'),
+        f.letter_sent||f.letter_written],
+      ['房租二十五', f.rent_talked?'■ 说好月中一并给':'□ 月中之前，得开口',f.rent_talked],
+      ['工钱十六块','□ 王会计说"过阵子"',false],
+      ['牙','■ 好利索了，不碍事',true],
+      ['账上的洞（第2天）','□ 少收两毛，数记不得了',false],
+      ['祭文（陈家）', f.jiwen_plain?'■ 椿树那句，照原话落的':'■ 椿树那句，雅了雅',true],
+      ['马婶家的往后','□ 南边来的信，明后天该到',false],
+      ['燕子','■ 衔泥了，就着旧茬补',true]
+    ];
   }
   let h='<div class="dayend"><h3>—— '+dayTitle+' ——</h3>';
   if(settleTip)h+='<p class="fx-tip">'+settleTip+'结存 '+st.money.toFixed(2)+'。</p>';
@@ -833,8 +1043,10 @@ function dayEndHtml(id){
   h+='</ul>';
   if(id==='d6_end'){
     h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第7天</button></div>';
+  }else if(id==='d7_end'){
+    h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第8天</button></div>';
   }else{
-    h+='<div class="next">第8天 · 还没来</div>';
+    h+='<div class="next">第9天 · 还没来</div>';
     h+='<p style="margin-top:10px;font-size:12px;color:var(--mut)">（这个摊子慢慢支。内容往后一笔一笔添。）</p>';
     h+='<p style="margin-top:6px;font-size:13px"><a class="fw-link" onclick="FW.open()" style="color:#8a7448;cursor:pointer;text-decoration:underline">电线杆上新贴了一张纸，字歪歪扭扭 →</a></p>';
   }
@@ -842,7 +1054,11 @@ function dayEndHtml(id){
 }
 
 function nextDay(){
-  st.scene=st.flags.letter_written?'d7_wake':'d7_wake_x';
+  if(st.scene==='d6_end'){
+    st.scene=st.flags.letter_written?'d7_wake':'d7_wake_x';
+  }else if(st.scene==='d7_end'){
+    st.scene=st.flags.letter_sent?'d8_wake':(st.flags.letter_written?'d8_wake_p':'d8_wake_x');
+  }
   save();showScene(st.scene);
 }
 
