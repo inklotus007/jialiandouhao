@@ -138,6 +138,7 @@
 const DAY={num:6,date:'1995年4月1日',week:'周六',weather:'晴，风软'};
 const DAY7={num:7,date:'1995年4月2日',week:'周日',weather:'晴，风软'};
 const DAY8={num:8,date:'1995年4月3日',week:'周一',weather:'晴，杨棉起来了'};
+const DAY9={num:9,date:'1995年4月4日',week:'周二',weather:'晴，杨棉正盛'};
 
 const SCENES={
 'd6_wake':{
@@ -720,6 +721,162 @@ const SCENES={
   text:[
     '记账。'
   ]
+},
+
+/* ---- 第9天 · 包袱 ---- */
+'d9_wake':{
+  day:DAY9,
+  text:[
+    '四月四号，周二。清明前一天。',
+    '街上比往日密。卖柳条的自行车挪到了邮局门口，后座两大捆下去了一半。斜对过纸摊的黄纸垛也矮了。',
+    '墨水瓶底下空着。东西在路上。'
+  ],
+  choices:[{t:'坐摊',go:'d9_street'}]
+},
+'d9_wake_p':{
+  day:DAY9,fx:{money:-0.2,flag:'letter_sent',mood:1},
+  text:[
+    '四月四号，周二。清明前一天。',
+    '天没大亮你就到了。老纪开门，头一个又是你。',
+    '两毛。戳子落下去，信进了邮袋。',
+    '慢五天快三天，今天算第一天。'
+  ],
+  choices:[{t:'坐摊',go:'d9_street'}]
+},
+'d9_wake_x':{
+  day:DAY9,
+  text:[
+    '四月四号，周二。清明前一天。',
+    '卖柳条的自行车后座空了半边。斜对过的黄纸垛矮下去一截。',
+    '稿纸在抽屉里。十九张。'
+  ],
+  choices:[{t:'坐摊',go:'d9_street'}]
+},
+'d9_street':{
+  day:DAY9,
+  text:[
+    '刚支好摊，老纪从门里探身："马家的电报，昨儿后晌到的。"',
+    '"今儿到。慢车，天擦黑。"',
+    '你知道他说的是谁。他也知道你知道。',
+    '头一个来的是写包袱的——打今儿起，摊上的活儿换了茬。'
+  ],
+  choices:[{t:'上午',go:'d9_baofu'}]
+},
+'d9_baofu':{
+  day:DAY9,
+  text:[
+    '一上午，四张。',
+    '一个后生，替他爹写给曾祖——两辈的名讳，都从你这儿问。',
+    '一个媳妇，抱着娃，写她公公。娃在黄纸上抓了一把，她把那只小手打开，拍了一下。娃不哭，盯着纸看。',
+    '包袱皮的体是死的：故显考某公讳某老大人收用。孝男某某，叩烧。手艺就是把名字填进格子里，不歪。'
+  ],
+  choices:[{t:'晌午前',go:'d9_mashen'}]
+},
+'d9_mashen':{
+  day:DAY9,
+  text:[
+    '晌午前，马婶来了。',
+    '一沓黄纸，两个白封——纸摊配好的。往桌上一搁："先生，写两个包袱。他爷爷，他奶奶。"',
+    '你问名讳。"马广田。他娘，李氏。"',
+    '铺开第一个封。头起：故显考马公讳广田老大人收用。',
+    '落款：孝男丰收，率男建生，叩烧。',
+    '"丰收"两个字，你写过四回。都在信封上，广东深圳，宝安区，那个工地你都能默出来。',
+    '头一回写在这上头。'
+  ],
+  choices:[{t:'——',go:'d9_ma2'}]
+},
+'d9_ma2':{
+  day:DAY9,
+  text:[
+    '第二个封：故显妣马母李氏老孺人收用。落款一样。',
+    '马婶在旁边看。看你写字，也看那两个名字。',
+    '"他爷爷走得早。丰收十六下地，顶他爹使。"',
+    '她不是跟你说的。你接着写你的。',
+    '"建生没见过他爷爷。名儿倒是认得——俺教的。"',
+    '写完最后一笔，吹墨。'
+  ],
+  choices:[{t:'收钱',go:'d9_pay'}]
+},
+'d9_pay':{
+  day:DAY9,fx:{rel_ma:1},
+  text:[
+    '两毛。她从裤腰里摸出个布卷，剥开，两张毛票按在桌上。',
+    '起身，黄纸和包袱皮夹进腋下。走了两步，又站住。',
+    '"你给我——"',
+    '起了个头，停了。',
+    '"……不咋用写了。他今儿到家，话当面说。"',
+    '走了。',
+    '"你给我写上"——这句你听了三年。今儿起了个头，搁下了。'
+  ],
+  choices:[{t:'下午',go:'d9_afternoon'}]
+},
+'d9_afternoon':{
+  day:DAY9,fx:{mood:1},
+  text:[
+    '下午，街上没人。有人的地方在坟上。',
+    '燕子还在忙。窝齐了——新泥深，旧泥浅，一眼能分出来。衔的不光是泥了，有软草。垫里头。',
+    '你把"安"字写了一遍。上回心不在，写歪了。这一回，手稳，心也在。'
+  ],
+  choices:[{t:'傍晚收摊',go:'d9_evening'}]
+},
+'d9_evening':{
+  day:DAY9,
+  text:[
+    '收摊。皮三那边叮叮当当，隔着街扔过来一句：',
+    '"马家嫂子往东关去了——换了个褂子。"',
+    '接站的。',
+    '你摘牌子。明天清明，摊子照支——邮局不歇，你也不歇。'
+  ],
+  choices:()=>[{t:'回屋',go:st.flags.letter_sent?'d9_night':'d9_night_x'}]
+},
+'d9_night':{
+  day:DAY9,fx:{mood:1},
+  text:[
+    '夜里。记账。',
+    '包袱皮上的"收用"两个字，今天写了六遍。人走了，地址还在。',
+    '信在路上。快的话，跟娘前后脚——娘上完坟回来，信在桌上。',
+    '睡前，把牌子取下来搁在灯底下。"代写书信"四个字，笔画淡了。',
+    '蘸墨，一笔一笔描。',
+    '墨干得快。天暖了。'
+  ],
+  choices:[{t:'睡',go:'d9_end'}]
+},
+'d9_night_x':{
+  day:DAY9,
+  text:[
+    '夜里。记账。',
+    '街那头有烧纸的。一点一点的光——赶不到坟前的人家，今夜先烧。',
+    '稿纸十九张。',
+    '今夜写，明儿头班寄，娘上完坟回来第三天到。再压，就压过清明了。'
+  ],
+  choices:[
+    {t:'动笔',go:'d9_letter',fx:{flag:'letter_written',mood:1}},
+    {t:'睡了',go:'d9_sleep_x',fx:{mood:-1}}
+  ]
+},
+'d9_letter':{
+  day:DAY9,
+  text:[
+    '就几行。',
+    '写完，落款：儿 有信。日期：一九九五年四月四日夜。',
+    '装进信封，压在墨水瓶底下。',
+    '晚了十来天。可娘拆信不看日子，看字。'
+  ],
+  choices:[{t:'睡',go:'d9_end'}]
+},
+'d9_sleep_x':{
+  day:DAY9,
+  text:[
+    '稿纸还是十九张。',
+    '明儿清明。娘的清明，一个人过。'
+  ],
+  choices:[{t:'——',go:'d9_end'}]
+},
+'d9_end':{
+  dayend:true,day:DAY9,
+  text:[
+    '记账。'
+  ]
 }
 };
 
@@ -989,6 +1146,9 @@ function dayEndHtml(id){
     }else if(id==='d8_end'){
       st.money=Math.round((st.money+0.5-0.2)*100)/100;
       settleTip='记帐：收五毛（祭文），支两毛（嚼谷）。邮票两毛，寄的时候付过了。';
+    }else if(id==='d9_end'){
+      st.money=Math.round((st.money+0.6-0.2)*100)/100;
+      settleTip='记帐：收六毛（包袱皮六张），支两毛（嚼谷）。';
     }
     f[key]=true;save();
   }
@@ -1019,7 +1179,7 @@ function dayEndHtml(id){
       ['高师傅的咳','□ 比昨天松——也可能是听惯了',false],
       ['燕子','■ 回来了两只。窝没重筑，蹲在电线上',true]
     ];
-  }else{
+  }else if(id==='d8_end'){
     dayTitle='第8天 完';
     items=[
       ['家信', f.letter_sent
@@ -1034,6 +1194,21 @@ function dayEndHtml(id){
       ['马婶家的往后','□ 南边来的信，明后天该到',false],
       ['燕子','■ 衔泥了，就着旧茬补',true]
     ];
+  }else if(id==='d9_end'){
+    dayTitle='第9天 完';
+    items=[
+      ['家信', f.letter_sent
+        ?'■ 在路上。快的话，跟娘前后脚到家'
+        :(f.letter_written?'■ 写好了，压在墨水瓶底下。明儿头班寄':'□ 三个月零八天'),
+        f.letter_sent||f.letter_written],
+      ['房租二十五','□ 说好月中一并给。还有十来天',false],
+      ['工钱十六块','□ 王会计说"过阵子"',false],
+      ['账上的洞（第2天）','□ 少收两毛，数记不得了',false],
+      ['马婶家的往后','■ 老马今儿到家。慢车，天擦黑',true],
+      ['包袱皮六张','■ "收用"写了六遍。人走了，地址还在',true],
+      ['祭文（陈家）','□ 明儿清明。椿树那句，该在坟头了',false],
+      ['燕子','■ 窝齐了。衔软草——垫里头',true]
+    ];
   }
   let h='<div class="dayend"><h3>—— '+dayTitle+' ——</h3>';
   if(settleTip)h+='<p class="fx-tip">'+settleTip+'结存 '+st.money.toFixed(2)+'。</p>';
@@ -1045,8 +1220,10 @@ function dayEndHtml(id){
     h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第7天</button></div>';
   }else if(id==='d7_end'){
     h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第8天</button></div>';
+  }else if(id==='d8_end'){
+    h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第9天</button></div>';
   }else{
-    h+='<div class="next">第9天 · 还没来</div>';
+    h+='<div class="next">第10天 · 还没来</div>';
     h+='<p style="margin-top:10px;font-size:12px;color:var(--mut)">（这个摊子慢慢支。内容往后一笔一笔添。）</p>';
     h+='<p style="margin-top:6px;font-size:13px"><a class="fw-link" onclick="FW.open()" style="color:#8a7448;cursor:pointer;text-decoration:underline">电线杆上新贴了一张纸，字歪歪扭扭 →</a></p>';
   }
@@ -1058,6 +1235,8 @@ function nextDay(){
     st.scene=st.flags.letter_written?'d7_wake':'d7_wake_x';
   }else if(st.scene==='d7_end'){
     st.scene=st.flags.letter_sent?'d8_wake':(st.flags.letter_written?'d8_wake_p':'d8_wake_x');
+  }else if(st.scene==='d8_end'){
+    st.scene=st.flags.letter_sent?'d9_wake':(st.flags.letter_written?'d9_wake_p':'d9_wake_x');
   }
   save();showScene(st.scene);
 }
