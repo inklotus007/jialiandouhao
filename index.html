@@ -139,6 +139,7 @@ const DAY={num:6,date:'1995年4月1日',week:'周六',weather:'晴，风软'};
 const DAY7={num:7,date:'1995年4月2日',week:'周日',weather:'晴，风软'};
 const DAY8={num:8,date:'1995年4月3日',week:'周一',weather:'晴，杨棉起来了'};
 const DAY9={num:9,date:'1995年4月4日',week:'周二',weather:'晴，杨棉正盛'};
+const DAY10={num:10,date:'1995年4月5日',week:'周三',weather:'清明，晴'};
 
 const SCENES={
 'd6_wake':{
@@ -877,6 +878,140 @@ const SCENES={
   text:[
     '记账。'
   ]
+},
+'d10_wake':{
+  day:DAY10,
+  text:[
+    '四月五号，周三。清明。',
+    '风里飘的，杨棉和纸灰，分不出来。',
+    '卖柳条的没来——后座两大捆，昨儿就空了。斜对过纸摊的垛，清了底。',
+    '东屋的门框上，插了柳。',
+    '信今儿到家。娘上完坟回来，信在。'
+  ],
+  choices:[{t:'坐摊',go:'d10_morning'}]
+},
+'d10_wake_p':{
+  day:DAY10,fx:{money:-0.2,flag:'letter_sent',mood:1},
+  text:[
+    '四月五号，周三。清明。',
+    '头班。邮局门开着，老纪一个人。',
+    '两毛。戳子落下去。',
+    '慢五天快三天，今儿算头一天。',
+    '东屋的门框上，插了柳。'
+  ],
+  choices:[{t:'坐摊',go:'d10_morning'}]
+},
+'d10_wake_x':{
+  day:DAY10,
+  text:[
+    '四月五号，周三。清明。',
+    '风里飘的，杨棉和纸灰，分不出来。',
+    '稿纸在抽屉里。十九张。',
+    '娘的清明，今儿一个人。',
+    '东屋的门框上，插了柳。'
+  ],
+  choices:[{t:'坐摊',go:'d10_morning'}]
+},
+'d10_morning':{
+  day:DAY10,
+  text:[
+    '支摊。皮三的门板上着。街上静，有人的地方在坟上。',
+    '邮局开着，老纪一个人在柜台里头。南边的汇款，清明照走。',
+    '头一个时辰，没人。'
+  ],
+  choices:[{t:'守着',go:'d10_noon'}]
+},
+'d10_noon':{
+  day:DAY10,
+  text:[
+    '晌午，还是没人。',
+    '上午，收零。',
+    '摆摊三个月，头一个零日。',
+    '杨棉过去一阵，纸灰过去一阵。看街。'
+  ],
+  choices:[{t:'下午',go:'d10_afternoon'}]
+},
+'d10_afternoon':{
+  day:DAY10,
+  text:[
+    '后晌，日头偏西。坟上的人往回走，篮子空了，步子慢。',
+    '蓝布帽打街那头过来。黄纸没了，帽子攥在手里。',
+    '走到摊前，站了站。没坐。',
+    '朝你抬了抬帽檐。走了。',
+    '椿树那句，到了。'
+  ],
+  choices:[{t:'收摊',go:'d10_dusk'}]
+},
+'d10_dusk':{
+  day:DAY10,
+  text:[
+    '天擦黑。街角起火了——不是失火。今儿的路口，一家一家的火。',
+    '马家在自家门口的路口烧。',
+    '建生蹲在火跟前，一张一张递。六个包袱进去，分不出哪个是你写的了。',
+    '他嘴里念叨。那个名字你昨天写过两回，今儿头一回听见。',
+    '马婶站在后头。昨儿那件褂子，袖口上落了灰。',
+    '门墩上坐着个人，背对着街。火从头烧到尾，他没动。'
+  ],
+  choices:[{t:'斜对过',go:'d10_burn'}]
+},
+'d10_burn':{
+  day:DAY10,
+  text:[
+    '斜对过，纸摊的垛清了底。两毛，一沓黄纸。',
+    '"包封不？"摇头。自家的，不用。',
+    '路口蹲下。画圈，留口——口朝着家的方向。',
+    '纸进去。三年没给爹烧了。',
+    '话没说。攒了三年的，今儿先当个到。'
+  ],
+  choices:()=>[{t:'回屋',go:st.flags.letter_sent?'d10_night':'d10_night_x'}]
+},
+'d10_night':{
+  day:DAY10,fx:{mood:1},
+  text:[
+    '夜里。记账。',
+    '收零，支四毛——黄纸两毛，嚼谷两毛。',
+    '信到家了。冷锅冷灶，信在桌上。也行。',
+    '爹的，火里到了。娘的，桌上到了。',
+    '墨水瓶底下空着，踏实。'
+  ],
+  choices:[{t:'睡',go:'d10_end'}]
+},
+'d10_night_x':{
+  day:DAY10,
+  text:[
+    '夜里。记账。',
+    '收零，支四毛——黄纸两毛，嚼谷两毛。',
+    '稿纸十九张。',
+    '三个月零九天。过了清明的信，就是平常的信了。'
+  ],
+  choices:[
+    {t:'动笔',go:'d10_letter',fx:{flag:'letter_written',mood:1}},
+    {t:'睡了',go:'d10_sleep_x',fx:{mood:-1}}
+  ]
+},
+'d10_letter':{
+  day:DAY10,
+  text:[
+    '就几行。',
+    '写完，落款：儿 有信。日期：一九九五年四月五日夜。',
+    '装进信封，压在墨水瓶底下。',
+    '晚了仨月。可娘拆信不看日子，看字。'
+  ],
+  choices:[{t:'睡',go:'d10_end'}]
+},
+'d10_sleep_x':{
+  day:DAY10,
+  text:[
+    '稿纸还是十九张。',
+    '街角的火，一家一家，都熄了。'
+  ],
+  choices:[{t:'——',go:'d10_end'}]
+},
+'d10_end':{
+  dayend:true,day:DAY10,
+  text:[
+    '记账。'
+  ]
 }
 };
 
@@ -1150,6 +1285,10 @@ function dayEndHtml(id){
       st.money=Math.round((st.money+0.6-0.2)*100)/100;
       settleTip='记帐：收六毛（包袱皮六张），支两毛（嚼谷）。';
     }
+    }else if(id==='d10_end'){
+      st.money=Math.round((st.money-0.4)*100)/100;
+      settleTip='记账：收零。支四毛（黄纸两毛、嚼谷两毛）。';
+    }
     f[key]=true;save();
   }
   let items,dayTitle;
@@ -1209,6 +1348,23 @@ function dayEndHtml(id){
       ['祭文（陈家）','□ 明儿清明。椿树那句，该在坟头了',false],
       ['燕子','■ 窝齐了。衔软草——垫里头',true]
     ];
+  }else if(id==='d10_end'){
+    dayTitle='第10天 完';
+    items=[
+      ['家信', f.letter_sent
+        ?'■ 到家了。娘上完坟回来，信在'
+        :(f.letter_written?'■ 写好了，压在墨水瓶底下。明儿头班（两毛）':'□ 三个月零九天。过了清明，平常的信'),
+        f.letter_sent||f.letter_written],
+      ['房租二十五','□ 月中一并给。还有八九天',false],
+      ['工钱十六块','□ 王会计说"过阵子"',false],
+      ['账上的洞（第2天）','□ 少收两毛，数记不得了',false],
+      ['马婶家的往后','■ 老马到家。门墩上坐着，背对着街',true],
+      ['包袱（马家）','■ 六个都进了火。名字，建生念了',true],
+      ['祭文（陈家）','■ 抬了帽檐。椿树那句，到了',true],
+      ['爹的纸','■ 三年头一回。口朝家，到了',true],
+      ['燕子','■ 进出的换勤了——像在孵',true],
+      ['高师傅的咳','□ 门框上插了柳。人没露面',false]
+    ];
   }
   let h='<div class="dayend"><h3>—— '+dayTitle+' ——</h3>';
   if(settleTip)h+='<p class="fx-tip">'+settleTip+'结存 '+st.money.toFixed(2)+'。</p>';
@@ -1222,8 +1378,10 @@ function dayEndHtml(id){
     h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第8天</button></div>';
   }else if(id==='d8_end'){
     h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第9天</button></div>';
+  }else if(id==='d9_end'){
+    h+='<div class="next" style="margin-top:14px"><button class="choice" style="width:100%" onclick="nextDay()">睡。进第10天</button></div>';
   }else{
-    h+='<div class="next">第10天 · 还没来</div>';
+    h+='<div class="next">第11天 · 还没来</div>';
     h+='<p style="margin-top:10px;font-size:12px;color:var(--mut)">（这个摊子慢慢支。内容往后一笔一笔添。）</p>';
     h+='<p style="margin-top:6px;font-size:13px"><a class="fw-link" onclick="FW.open()" style="color:#8a7448;cursor:pointer;text-decoration:underline">电线杆上新贴了一张纸，字歪歪扭扭 →</a></p>';
   }
@@ -1237,6 +1395,8 @@ function nextDay(){
     st.scene=st.flags.letter_sent?'d8_wake':(st.flags.letter_written?'d8_wake_p':'d8_wake_x');
   }else if(st.scene==='d8_end'){
     st.scene=st.flags.letter_sent?'d9_wake':(st.flags.letter_written?'d9_wake_p':'d9_wake_x');
+  }else if(st.scene==='d9_end'){
+    st.scene=st.flags.letter_sent?'d10_wake':(st.flags.letter_written?'d10_wake_p':'d10_wake_x');
   }
   save();showScene(st.scene);
 }
